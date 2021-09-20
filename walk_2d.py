@@ -49,7 +49,7 @@ class Walk2D:
         return self.state, reward, done
 
 np.random.seed(0)
-maxx, maxy = 2, 2
+maxx, maxy = 1, 1
 env = Walk2D(maxx=maxx, maxy=maxy)
 # Parameters
 eps = 0.1
@@ -57,8 +57,7 @@ gamma = 0.9
 num_episodes = 10
 
 max_timestamp = 100
-avf = np.zeros(shape=(maxx, maxy, 4))
-print(avf)
+avf = np.zeros(shape=(maxx + 1, maxy + 1, 4))
 
 for episode in range(num_episodes):
     print("Episode " + str(episode))
@@ -70,9 +69,9 @@ for episode in range(num_episodes):
         else:
             action = np.argmax(avf[state[0]][state[1]])
         next_state, reward, done = env.step(action)
-        td_target = reward + gamma * avf[next_state[0]][next_state[1]] * (not done)
-        td_error = td_target - avf[state[0]][state[1]]
-        avf[state[0]][state[1]] += td_error
+        td_target = reward + gamma * avf[next_state[0]][next_state[1]][action] * (not done)
+        td_error = td_target - avf[state[0]][state[1]][action]
+        avf[state[0]][state[1]][action] += td_error
         state = next_state
         timestamp += 1
         if timestamp > max_timestamp:
@@ -80,8 +79,10 @@ for episode in range(num_episodes):
             break
         if done:
             print("Done")
-    print(avf)
-import pdb
-pdb.set_trace()
+for x in range(maxx + 1):
+    for y in range(maxy + 1):
+        print(np.argmax(avf[x][y]), end=" ")
+        if(y == maxy):
+            print("")
 
 

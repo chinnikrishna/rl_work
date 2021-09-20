@@ -41,15 +41,16 @@ class Walk1D:
         return self.state, reward, done
 
 
-env = Walk1D(max_state=2)
+env = Walk1D(max_state=2000)
 # Parameters
 eps = 0.1
 gamma = 0.9
-num_episodes = 200
-max_timestamp = env.max_state * 100
+num_episodes = 100
+max_timestamp = 10000
 avf = np.zeros(shape=(env.max_state + 1, 2))
 num_steps = []
 for episode in range(num_episodes):
+    print("Episode: " + str(episode))
     state, reward, done = env.reset()
     timestamp = 0
     while not done:
@@ -64,9 +65,13 @@ for episode in range(num_episodes):
         state = next_state
         timestamp += 1
         if timestamp > max_timestamp:
+            print("Break")
             break
+        if done:
+            print("Done")
     num_steps.append(timestamp)
-
+for state in avf:
+    print(np.argmax(state), end=" ")
 # plt.plot([x for x in range(num_episodes)], num_steps)
 # plt.show()
 
